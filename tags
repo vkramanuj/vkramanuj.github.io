@@ -1,0 +1,63 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+aperture_start	index.html	/^                function aperture_start() {$/;"	f
+aperture_stop	index.html	/^                function aperture_stop() {$/;"	f
+bs_start	index.html	/^                function bs_start() {$/;"	f
+bs_stop	index.html	/^                function bs_stop() {$/;"	f
+ccc_start	index.html	/^                function ccc_start() {$/;"	f
+ccc_stop	index.html	/^                function ccc_stop() {$/;"	f
+cvpr12_start	index.html	/^                function cvpr12_start() {$/;"	f
+cvpr12_stop	index.html	/^                function cvpr12_stop() {$/;"	f
+darkflash_start	index.html	/^                function darkflash_start() {$/;"	f
+darkflash_stop	index.html	/^                function darkflash_stop() {$/;"	f
+deepburst_start	index.html	/^                function deepburst_start() {$/;"	f
+deepburst_stop	index.html	/^                function deepburst_stop() {$/;"	f
+defocus_start	index.html	/^                function defocus_start() {$/;"	f
+defocus_stop	index.html	/^                function defocus_stop() {$/;"	f
+diverdi_start	index.html	/^                function diverdi_start() {$/;"	f
+diverdi_stop	index.html	/^                function diverdi_stop() {$/;"	f
+dpzlearn_start	index.html	/^                function dpzlearn_start() {$/;"	f
+dpzlearn_stop	index.html	/^                function dpzlearn_stop() {$/;"	f
+dt_start	index.html	/^                function dt_start() {$/;"	f
+dt_stop	index.html	/^                function dt_stop() {$/;"	f
+eccv12_start	index.html	/^                function eccv12_start() {$/;"	f
+eccv12_stop	index.html	/^                function eccv12_stop() {$/;"	f
+ffcc_start	index.html	/^                function ffcc_start() {$/;"	f
+ffcc_stop	index.html	/^                function ffcc_stop() {$/;"	f
+flyspin_start	index.html	/^                function flyspin_start() {$/;"	f
+flyspin_stop	index.html	/^                function flyspin_stop() {$/;"	f
+font_start	index.html	/^                function font_start() {$/;"	f
+font_stop	index.html	/^                function font_stop() {$/;"	f
+friendly_start	index.html	/^                function friendly_start() {$/;"	f
+friendly_stop	index.html	/^                function friendly_stop() {$/;"	f
+gtag	index.html	/^    function gtag(){dataLayer.push(arguments);}$/;"	f
+hdrnet_start	index.html	/^                function hdrnet_start() {$/;"	f
+hdrnet_stop	index.html	/^                function hdrnet_stop() {$/;"	f
+hdrp_start	index.html	/^                function hdrp_start() {$/;"	f
+hdrp_stop	index.html	/^                function hdrp_stop() {$/;"	f
+jump_start	index.html	/^                function jump_start() {$/;"	f
+jump_stop	index.html	/^                function jump_stop() {$/;"	f
+loss_start	index.html	/^                function loss_start() {$/;"	f
+loss_stop	index.html	/^                function loss_stop() {$/;"	f
+motionblur_start	index.html	/^                function motionblur_start() {$/;"	f
+motionblur_stop	index.html	/^                function motionblur_stop() {$/;"	f
+motionstereo_start	index.html	/^                function motionstereo_start() {$/;"	f
+motionstereo_stop	index.html	/^                function motionstereo_stop() {$/;"	f
+mpi_start	index.html	/^                function mpi_start() {$/;"	f
+mpi_stop	index.html	/^                function mpi_stop() {$/;"	f
+nightsight_start	index.html	/^                function nightsight_start() {$/;"	f
+nightsight_stop	index.html	/^                function nightsight_stop() {$/;"	f
+porlight_start	index.html	/^                function porlight_start() {$/;"	f
+porlight_stop	index.html	/^                function porlight_stop() {$/;"	f
+portrait_start	index.html	/^                function portrait_start() {$/;"	f
+portrait_stop	index.html	/^                function portrait_stop() {$/;"	f
+rgbd_start	index.html	/^                function rgbd_start() {$/;"	f
+rgbd_stop	index.html	/^                function rgbd_stop() {$/;"	f
+sirfs_start	index.html	/^                function sirfs_start() {$/;"	f
+sirfs_stop	index.html	/^                function sirfs_stop() {$/;"	f
+unprocessing_start	index.html	/^                function unprocessing_start() {$/;"	f
+unprocessing_stop	index.html	/^                function unprocessing_stop() {$/;"	f
