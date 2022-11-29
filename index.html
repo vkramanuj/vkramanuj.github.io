@@ -38,7 +38,8 @@
               <p style="text-align:center">
                 <a href="mailto:ramanv@cs.washington.edu">Email</a> &nbsp/&nbsp
                 <a href="cv.pdf">CV</a> &nbsp/&nbsp
-                <a href="https://www.github.com/vkramanuj">Github</a> 
+                <a href="https://www.github.com/vkramanuj">Github</a> &nbsp/&nbsp
+                <a href="https://scholar.google.com/citations?user=yXFPyNMAAAAJ&hl=en">Google Scholar</a>
               </p>
             </td>
           </tr>
@@ -48,12 +49,45 @@
             <td style="padding:20px;width:100%;vertical-align:middle">
               <heading>Research</heading>
               <p>
-                I'm broadly interested in computer vision, machine learning, and optimization. <!--- Representative papers are <span class="highlight">highlighted</span>. --->
+                I'm broadly interested in computer vision, machine learning, and optimization. See my Google Scholar for a consistently up-to-date publication list. <!--- Representative papers are <span class="highlight">highlighted</span>. --->
               </p>
             </td>
           </tr>
         </tbody></table>
         <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <tr>
+            <td style="padding:20px;width:25%;vertical-align:middle">
+              <img src="images/teaser_fct.png" alt="clean-usnob" width="180">
+            </td>
+            <td width="75%" valign="middle">
+              <a href="https://arxiv.org/abs/2112.02805">
+                <papertitle>Forward Compatible Training for Representation Learning</papertitle>
+              </a>
+              <br>
+              <strong>Vivek Ramanujan</strong>, Pavan Kumar Anasosalu Vasu, Ali Farhadi, Oncel Tuzel, Hadi Pouransari
+              <br>
+              <em>In Proceedings at CVPR</em>, 2022
+              <p>In real world visual retrieval systems, the embedding model is consistently updated. This requires embeddings for all images in the gallery to be recomputed for every new model, an expensive process known as backfilling. We present a method for forward compatible training (FCT) in which we prepare for the future version of a model by saving cheap auxiliary information about the present training task. We show empirically that this improves performance on model compatibility on common largescale datasets (ImageNet, Places-365, VGGFace2).</p>
+              <p><a href="https://github.com/apple/ml-fct">Code</a> </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px;width:25%;vertical-align:middle">
+              <img src="images/teaser_param.png" alt="clean-usnob" width="180">
+            </td>
+            <td width="75%" valign="middle">
+              <a href="https://arxiv.org/abs/2010.09697">
+                <papertitle>Effects of Parameter Norm Growth During Transformer Training: Inductive Bias from Gradient Descent</papertitle>
+              </a>
+              <br>
+              Will Merrill, <strong>Vivek Ramanujan</strong>, Yoav Goldberg, Roy Schwartz, Noah Smith
+              <br>
+              <em>In Proceedings at EMNLP</em>, <em>(Oral)</em> 2022
+              <p>The capacity of neural networks like the widely adopted transformer is known to be very high. Evidence is emerging that they learn successfully due to inductive bias in the training routine, typically a variant of gradient descent (GD). As the parameters grow in magnitude, we prove that the network approximates a discretized network with saturated activation functions. Such "saturated" networks are known to have a reduced capacity compared to the full network family that can be described in terms of formal languages and automata. Our results suggest saturation is a new characterization of an inductive bias implicit in GD of particular interest for NLP. We leverage the emergent discrete structure in a saturated transformer to analyze the role of different attention heads, finding that some focus locally on a small number of positions, while other heads compute global averages, allowing counting.</p>
+            </td>
+          </tr>
+
           <tr>
             <td style="padding:20px;width:25%;vertical-align:middle">
               <img src="images/teaser_supsup.png" alt="clean-usnob" width="180">
