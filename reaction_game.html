@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Test Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: #222;
+            color: white;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
+
+        .quadrant {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.1s;
+            border: 2px solid #444;
+        }
+
+        .quadrant:active {
+            transform: scale(0.95);
+        }
+
+        .quadrant-a {
+            background: #2c5aa0;
+        }
+
+        .quadrant-b {
+            background: #a02c2c;
+        }
+
+        .quadrant-c {
+            background: #2ca05a;
+        }
+
+        .quadrant-d {
+            background: #a0752c;
+        }
+
+        .quadrant.correct {
+            background: #4CAF50 !important;
+        }
+
+        .quadrant.wrong {
+            background: #f44336 !important;
+        }
+
+        .center-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid white;
+            border-radius: 20px;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            font-weight: bold;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .center-display.show {
+            opacity: 1;
+        }
+
+        .stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+
+        .start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            text-align: center;
+        }
+
+        .start-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .start-button:active {
+            transform: scale(0.95);
+        }
+
+        .instructions {
+            max-width: 80%;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="quadrant quadrant-a" data-letter="A">A</div>
+        <div class="quadrant quadrant-b" data-letter="B">B</div>
+        <div class="quadrant quadrant-c" data-letter="C">C</div>
+        <div class="quadrant quadrant-d" data-letter="D">D</div>
+        
+        <div class="center-display" id="centerDisplay"></div>
+        
+        <div class="stats" id="stats">
+            <div>Score: <span id="score">0</span></div>
+            <div>Best: <span id="bestTime">-</span>ms</div>
+            <div>Last: <span id="lastTime">-</span>ms</div>
+        </div>
+        
+        <div class="start-screen" id="startScreen">
+            <h1>Reaction Test</h1>
+            <div class="instructions">
+                <p>When a letter appears in the center, tap the matching quadrant as fast as possible!</p>
+                <p>A = Top Left, B = Top Right</p>
+                <p>C = Bottom Left, D = Bottom Right</p>
+            </div>
+            <button class="start-button" onclick="startGame()">Start Game</button>
+        </div>
+    </div>
+
+    <script>
+        class ReactionGame {
+            constructor() {
+                this.score = 0;
+                this.bestTime = null;
+                this.lastTime = null;
+                this.currentLetter = null;
+                this.startTime = null;
+                this.gameActive = false;
+                this.timeoutId = null;
+                
+                this.centerDisplay = document.getElementById('centerDisplay');
+                this.scoreElement = document.getElementById('score');
+                this.bestTimeElement = document.getElementById('bestTime');
+                this.lastTimeElement = document.getElementById('lastTime');
+                this.startScreen = document.getElementById('startScreen');
+                
+                this.letters = ['A', 'B', 'C', 'D'];
+                this.setupEventListeners();
+            }
+            
+            setupEventListeners() {
+                const quadrants = document.querySelectorAll('.quadrant');
+                quadrants.forEach(quadrant => {
+                    quadrant.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        this.handleQuadrantTap(quadrant.dataset.letter);
+                    });
+                    quadrant.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.handleQuadrantTap(quadrant.dataset.letter);
+                    });
+                });
+            }
+            
+            startGame() {
+                this.startScreen.style.display = 'none';
+                this.gameActive = true;
+                this.scheduleNextLetter();
+            }
+            
+            scheduleNextLetter() {
+                if (!this.gameActive) return;
+                
+                // Random delay between 1-4 seconds
+                const delay = Math.random() * 3000 + 1000;
+                
+                this.timeoutId = setTimeout(() => {
+                    this.showLetter();
+                }, delay);
+            }
+            
+            showLetter() {
+                if (!this.gameActive) return;
+                
+                this.currentLetter = this.letters[Math.floor(Math.random() * this.letters.length)];
+                this.centerDisplay.textContent = this.currentLetter;
+                this.centerDisplay.classList.add('show');
+                this.startTime = Date.now();
+                
+                // Auto-hide after 3 seconds if no response
+                setTimeout(() => {
+                    if (this.currentLetter) {
+                        this.hideLetter();
+                        this.scheduleNextLetter();
+                    }
+                }, 3000);
+            }
+            
+            hideLetter() {
+                this.centerDisplay.classList.remove('show');
+                this.currentLetter = null;
+                this.startTime = null;
+            }
+            
+            handleQuadrantTap(letter) {
+                if (!this.currentLetter || !this.startTime) return;
+                
+                const reactionTime = Date.now() - this.startTime;
+                const quadrant = document.querySelector(`[data-letter="${letter}"]`);
+                
+                if (letter === this.currentLetter) {
+                    // Correct answer
+                    this.score++;
+                    this.lastTime = reactionTime;
+                    
+                    if (!this.bestTime || reactionTime < this.bestTime) {
+                        this.bestTime = reactionTime;
+                    }
+                    
+                    quadrant.classList.add('correct');
+                    setTimeout(() => quadrant.classList.remove('correct'), 200);
+                    
+                    this.updateStats();
+                } else {
+                    // Wrong answer
+                    quadrant.classList.add('wrong');
+                    setTimeout(() => quadrant.classList.remove('wrong'), 200);
+                }
+                
+                this.hideLetter();
+                this.scheduleNextLetter();
+            }
+            
+            updateStats() {
+                this.scoreElement.textContent = this.score;
+                this.lastTimeElement.textContent = this.lastTime;
+                this.bestTimeElement.textContent = this.bestTime || '-';
+            }
+        }
+        
+        const game = new ReactionGame();
+        
+        function startGame() {
+            game.startGame();
+        }
+        
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
