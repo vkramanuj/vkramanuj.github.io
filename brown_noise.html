@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Brown Noise">
     <title>Brown Noise Generator</title>
     <style>
         body {
@@ -88,6 +91,15 @@
             margin-top: 20px;
             opacity: 0.8;
         }
+
+        .install-hint {
+            font-size: 0.8em;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(212, 165, 116, 0.1);
+            border-radius: 5px;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -106,6 +118,10 @@
             Higher β = Deeper brown noise<br>
             Range: 0.5 - 4.0
         </div>
+
+        <div class="install-hint">
+            💡 For background playback on iOS: Add to Home Screen and use as web app
+        </div>
     </div>
 
     <script>
@@ -117,9 +133,12 @@
                 this.gainNode = null;
                 this.isPlaying = false;
                 this.beta = 2.0;
+                this.wakeLock = null;
                 
                 this.initializeElements();
                 this.setupEventListeners();
+                this.setupMediaSession();
+                this.setupVisibilityHandling();
             }
             
             initializeElements() {
@@ -133,6 +152,57 @@
                 this.playBtn.addEventListener('click', () => this.toggleNoise());
                 this.upBtn.addEventListener('click', () => this.adjustBeta(0.1));
                 this.downBtn.addEventListener('click', () => this.adjustBeta(-0.1));
+            }
+
+            setupMediaSession() {
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: 'Brown Noise Generator',
+                        artist: 'Background Audio',
+                        artwork: []
+                    });
+
+                    navigator.mediaSession.setActionHandler('play', () => {
+                        if (!this.isPlaying) this.toggleNoise();
+                    });
+
+                    navigator.mediaSession.setActionHandler('pause', () => {
+                        if (this.isPlaying) this.toggleNoise();
+                    });
+                }
+            }
+
+            setupVisibilityHandling() {
+                document.addEventListener('visibilitychange', () => {
+                    if (this.isPlaying && this.audioContext) {
+                        if (document.hidden) {
+                            // Keep audio context running when page becomes hidden
+                            this.audioContext.resume();
+                        } else {
+                            // Resume if needed when page becomes visible
+                            if (this.audioContext.state === 'suspended') {
+                                this.audioContext.resume();
+                            }
+                        }
+                    }
+                });
+            }
+
+            async requestWakeLock() {
+                try {
+                    if ('wakeLock' in navigator) {
+                        this.wakeLock = await navigator.wakeLock.request('screen');
+                    }
+                } catch (err) {
+                    console.log('Wake lock not supported or failed:', err);
+                }
+            }
+
+            releaseWakeLock() {
+                if (this.wakeLock) {
+                    this.wakeLock.release();
+                    this.wakeLock = null;
+                }
             }
             
             async initAudio() {
@@ -169,8 +239,6 @@
             
             updateFilter() {
                 if (this.filterNode) {
-                    // Brown noise is created by low-pass filtering with frequency roll-off
-                    // Higher beta = lower cutoff frequency = deeper brown noise
                     const cutoffFreq = Math.max(50, 2000 / Math.pow(this.beta, 2));
                     this.filterNode.type = 'lowpass';
                     this.filterNode.frequency.value = cutoffFreq;
@@ -188,6 +256,13 @@
                     this.isPlaying = true;
                     this.playBtn.textContent = 'Stop Noise';
                     this.playBtn.classList.add('playing');
+                    
+                    // Update media session
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.playbackState = 'playing';
+                    }
+                    
+                    await this.requestWakeLock();
                 } else {
                     this.noiseNode.stop();
                     this.noiseNode = null;
@@ -195,6 +270,13 @@
                     this.isPlaying = false;
                     this.playBtn.textContent = 'Start Noise';
                     this.playBtn.classList.remove('playing');
+                    
+                    // Update media session
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.playbackState = 'paused';
+                    }
+                    
+                    this.releaseWakeLock();
                 }
             }
             
