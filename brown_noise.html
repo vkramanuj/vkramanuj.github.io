@@ -23,7 +23,7 @@
         }
         
         .container {
-            max-width: 400px;
+            max-width: 500px;
             width: 100%;
         }
         
@@ -32,26 +32,46 @@
             font-size: 2em;
         }
         
-        .controls {
+        .section {
             margin: 30px 0;
+            padding: 20px;
+            background: rgba(212, 165, 116, 0.1);
+            border-radius: 10px;
         }
         
-        .beta-display {
-            font-size: 3em;
-            font-weight: bold;
-            margin: 20px 0;
+        .section h3 {
+            margin-top: 0;
             color: #f4c2a1;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .display {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0 20px;
+            color: #f4c2a1;
+            min-width: 80px;
+        }
+        
+        .small-display {
+            font-size: 1.5em;
         }
         
         .arrow-btn {
             background: #8b4513;
             border: none;
             color: white;
-            font-size: 4em;
-            width: 120px;
-            height: 120px;
-            border-radius: 15px;
-            margin: 10px;
+            font-size: 2em;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin: 5px;
             cursor: pointer;
             touch-action: manipulation;
             user-select: none;
@@ -86,9 +106,29 @@
             background: #dc143c;
         }
         
-        .beta-info {
+        .metronome-btn {
+            background: #4169e1;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin: 10px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        
+        .metronome-btn:hover {
+            background: #6495ed;
+        }
+        
+        .metronome-btn.playing {
+            background: #ff6347;
+        }
+        
+        .info {
             font-size: 0.9em;
-            margin-top: 20px;
+            margin-top: 15px;
             opacity: 0.8;
         }
 
@@ -108,15 +148,40 @@
         
         <button class="play-btn" id="playBtn">Start Noise</button>
         
-        <div class="controls">
-            <button class="arrow-btn" id="upBtn">▲</button>
-            <div class="beta-display" id="betaDisplay">2.0</div>
-            <button class="arrow-btn" id="downBtn">▼</button>
+        <div class="section">
+            <h3>Brown Noise</h3>
+            <div class="controls">
+                <button class="arrow-btn" id="upBtn">▲</button>
+                <div class="display" id="betaDisplay">2.0</div>
+                <button class="arrow-btn" id="downBtn">▼</button>
+            </div>
+            <div class="info">
+                Higher β = Deeper brown noise<br>
+                Range: 0.5 - 4.0
+            </div>
         </div>
-        
-        <div class="beta-info">
-            Higher β = Deeper brown noise<br>
-            Range: 0.5 - 4.0
+
+        <div class="section">
+            <h3>Metronome</h3>
+            <button class="metronome-btn" id="metronomeBtn">Start Metronome</button>
+            
+            <div class="controls">
+                <span>BPM:</span>
+                <button class="arrow-btn" id="bpmDownBtn">▼</button>
+                <div class="display small-display" id="bpmDisplay">120</div>
+                <button class="arrow-btn" id="bpmUpBtn">▲</button>
+            </div>
+            
+            <div class="controls">
+                <span>Volume:</span>
+                <button class="arrow-btn" id="volDownBtn">▼</button>
+                <div class="display small-display" id="volDisplay">50%</div>
+                <button class="arrow-btn" id="volUpBtn">▲</button>
+            </div>
+            
+            <div class="info">
+                BPM: 30-200 | Volume: 0-100%
+            </div>
         </div>
 
         <div class="install-hint">
@@ -131,8 +196,14 @@
                 this.noiseNode = null;
                 this.filterNode = null;
                 this.gainNode = null;
+                this.metronomeGainNode = null;
+                this.masterGainNode = null;
                 this.isPlaying = false;
+                this.isMetronomeOn = false;
                 this.beta = 2.0;
+                this.bpm = 120;
+                this.metronomeVolume = 0.5;
+                this.metronomeInterval = null;
                 this.wakeLock = null;
                 
                 this.initializeElements();
@@ -146,12 +217,24 @@
                 this.upBtn = document.getElementById('upBtn');
                 this.downBtn = document.getElementById('downBtn');
                 this.betaDisplay = document.getElementById('betaDisplay');
+                this.metronomeBtn = document.getElementById('metronomeBtn');
+                this.bpmUpBtn = document.getElementById('bpmUpBtn');
+                this.bpmDownBtn = document.getElementById('bpmDownBtn');
+                this.volUpBtn = document.getElementById('volUpBtn');
+                this.volDownBtn = document.getElementById('volDownBtn');
+                this.bpmDisplay = document.getElementById('bpmDisplay');
+                this.volDisplay = document.getElementById('volDisplay');
             }
             
             setupEventListeners() {
                 this.playBtn.addEventListener('click', () => this.toggleNoise());
                 this.upBtn.addEventListener('click', () => this.adjustBeta(0.1));
                 this.downBtn.addEventListener('click', () => this.adjustBeta(-0.1));
+                this.metronomeBtn.addEventListener('click', () => this.toggleMetronome());
+                this.bpmUpBtn.addEventListener('click', () => this.adjustBPM(5));
+                this.bpmDownBtn.addEventListener('click', () => this.adjustBPM(-5));
+                this.volUpBtn.addEventListener('click', () => this.adjustMetronomeVolume(5));
+                this.volDownBtn.addEventListener('click', () => this.adjustMetronomeVolume(-5));
             }
 
             setupMediaSession() {
@@ -176,10 +259,8 @@
                 document.addEventListener('visibilitychange', () => {
                     if (this.isPlaying && this.audioContext) {
                         if (document.hidden) {
-                            // Keep audio context running when page becomes hidden
                             this.audioContext.resume();
                         } else {
-                            // Resume if needed when page becomes visible
                             if (this.audioContext.state === 'suspended') {
                                 this.audioContext.resume();
                             }
@@ -204,10 +285,76 @@
                     this.wakeLock = null;
                 }
             }
+
+            createMetronomeTick() {
+                if (!this.audioContext) return;
+
+                const tickDuration = 0.1;
+                const sampleRate = this.audioContext.sampleRate;
+                const tickBuffer = this.audioContext.createBuffer(1, sampleRate * tickDuration, sampleRate);
+                const output = tickBuffer.getChannelData(0);
+
+                // Create metronome tick with harmonics (like a real metronome)
+                const fundamental = 800; // Base frequency
+                const harmonics = [1, 2, 3, 4]; // Harmonic multipliers
+                const harmonicAmps = [1, 0.5, 0.3, 0.2]; // Harmonic amplitudes
+
+                for (let i = 0; i < output.length; i++) {
+                    const t = i / sampleRate;
+                    let sample = 0;
+
+                    // Add harmonics
+                    for (let h = 0; h < harmonics.length; h++) {
+                        const freq = fundamental * harmonics[h];
+                        const amp = harmonicAmps[h];
+                        sample += Math.sin(2 * Math.PI * freq * t) * amp;
+                    }
+
+                    // Apply envelope (attack and decay)
+                    const envelope = Math.exp(-t * 30) * Math.min(1, t * 100);
+                    output[i] = sample * envelope * 0.3;
+                }
+
+                // Play the tick
+                const tickSource = this.audioContext.createBufferSource();
+                tickSource.buffer = tickBuffer;
+                tickSource.connect(this.metronomeGainNode);
+                tickSource.start();
+            }
+
+            startMetronome() {
+                if (this.metronomeInterval) {
+                    clearInterval(this.metronomeInterval);
+                }
+
+                const intervalMs = (60 / this.bpm) * 1000;
+                this.metronomeInterval = setInterval(() => {
+                    this.createMetronomeTick();
+                }, intervalMs);
+
+                // Play first tick immediately
+                this.createMetronomeTick();
+            }
+
+            stopMetronome() {
+                if (this.metronomeInterval) {
+                    clearInterval(this.metronomeInterval);
+                    this.metronomeInterval = null;
+                }
+            }
             
             async initAudio() {
                 if (!this.audioContext) {
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Create master gain node
+                    this.masterGainNode = this.audioContext.createGain();
+                    this.masterGainNode.connect(this.audioContext.destination);
+
+                    // Create metronome gain node
+                    this.metronomeGainNode = this.audioContext.createGain();
+                    this.metronomeGainNode.gain.value = this.metronomeVolume;
+                    this.metronomeGainNode.connect(this.masterGainNode);
                     
                     // Create noise buffer
                     const bufferSize = this.audioContext.sampleRate * 2;
@@ -231,7 +378,7 @@
                     // Connect nodes
                     this.noiseNode.connect(this.filterNode);
                     this.filterNode.connect(this.gainNode);
-                    this.gainNode.connect(this.audioContext.destination);
+                    this.gainNode.connect(this.masterGainNode);
                     
                     this.updateFilter();
                 }
@@ -257,7 +404,6 @@
                     this.playBtn.textContent = 'Stop Noise';
                     this.playBtn.classList.add('playing');
                     
-                    // Update media session
                     if ('mediaSession' in navigator) {
                         navigator.mediaSession.playbackState = 'playing';
                     }
@@ -271,7 +417,11 @@
                     this.playBtn.textContent = 'Start Noise';
                     this.playBtn.classList.remove('playing');
                     
-                    // Update media session
+                    // Stop metronome if running
+                    if (this.isMetronomeOn) {
+                        this.toggleMetronome();
+                    }
+                    
                     if ('mediaSession' in navigator) {
                         navigator.mediaSession.playbackState = 'paused';
                     }
@@ -279,11 +429,51 @@
                     this.releaseWakeLock();
                 }
             }
+
+            async toggleMetronome() {
+                if (!this.isMetronomeOn) {
+                    if (!this.audioContext) {
+                        await this.initAudio();
+                        if (this.audioContext.state === 'suspended') {
+                            await this.audioContext.resume();
+                        }
+                    }
+                    this.startMetronome();
+                    this.isMetronomeOn = true;
+                    this.metronomeBtn.textContent = 'Stop Metronome';
+                    this.metronomeBtn.classList.add('playing');
+                } else {
+                    this.stopMetronome();
+                    this.isMetronomeOn = false;
+                    this.metronomeBtn.textContent = 'Start Metronome';
+                    this.metronomeBtn.classList.remove('playing');
+                }
+            }
             
             adjustBeta(delta) {
                 this.beta = Math.max(0.5, Math.min(4.0, this.beta + delta));
                 this.betaDisplay.textContent = this.beta.toFixed(1);
                 this.updateFilter();
+            }
+
+            adjustBPM(delta) {
+                this.bpm = Math.max(30, Math.min(200, this.bpm + delta));
+                this.bpmDisplay.textContent = this.bpm.toString();
+                
+                // Restart metronome with new BPM if it's running
+                if (this.isMetronomeOn) {
+                    this.startMetronome();
+                }
+            }
+
+            adjustMetronomeVolume(delta) {
+                const volumePercent = Math.max(0, Math.min(100, Math.round(this.metronomeVolume * 100) + delta));
+                this.metronomeVolume = volumePercent / 100;
+                this.volDisplay.textContent = volumePercent + '%';
+                
+                if (this.metronomeGainNode) {
+                    this.metronomeGainNode.gain.value = this.metronomeVolume;
+                }
             }
         }
         
