@@ -173,14 +173,15 @@
             </div>
             
             <div class="controls">
-                <span>Volume:</span>
-                <button class="arrow-btn" id="volDownBtn">▼</button>
-                <div class="display small-display" id="volDisplay">50%</div>
-                <button class="arrow-btn" id="volUpBtn">▲</button>
+                <span>Frequency:</span>
+                <button class="arrow-btn" id="freqDownBtn">▼</button>
+                <div class="display small-display" id="freqDisplay">800Hz</div>
+                <button class="arrow-btn" id="freqUpBtn">▲</button>
             </div>
-            
+
+            <!-- Update the info section (line 182-184) -->
             <div class="info">
-                BPM: 30-200 | Volume: 0-100%
+                BPM: 30-200 | Volume: 0-100% | Frequency: 200-2000Hz
             </div>
         </div>
 
@@ -210,6 +211,8 @@
                 this.setupEventListeners();
                 this.setupMediaSession();
                 this.setupVisibilityHandling();
+
+                this.metronomeFrequency = 600;
             }
             
             initializeElements() {
@@ -224,6 +227,9 @@
                 this.volDownBtn = document.getElementById('volDownBtn');
                 this.bpmDisplay = document.getElementById('bpmDisplay');
                 this.volDisplay = document.getElementById('volDisplay');
+                this.freqUpBtn = document.getElementById('freqUpBtn');
+                this.freqDownBtn = document.getElementById('freqDownBtn');
+                this.freqDisplay = document.getElementById('freqDisplay');
             }
             
             setupEventListeners() {
@@ -235,6 +241,9 @@
                 this.bpmDownBtn.addEventListener('click', () => this.adjustBPM(-5));
                 this.volUpBtn.addEventListener('click', () => this.adjustMetronomeVolume(5));
                 this.volDownBtn.addEventListener('click', () => this.adjustMetronomeVolume(-5));
+
+                this.freqUpBtn.addEventListener('click', () => this.adjustMetronomeFrequency(50));
+                this.freqDownBtn.addEventListener('click', () => this.adjustMetronomeFrequency(-50));
             }
 
             setupMediaSession() {
@@ -295,9 +304,9 @@
                 const output = tickBuffer.getChannelData(0);
 
                 // Create metronome tick with harmonics (like a real metronome)
-                const fundamental = 800; // Base frequency
-                const harmonics = [1, 2, 3, 4]; // Harmonic multipliers
-                const harmonicAmps = [1, 0.5, 0.3, 0.2]; // Harmonic amplitudes
+                const fundamental = Math.max(200, this.metronomeFrequency * 0.75); // Slightly lower base
+                const harmonics = [1, 2, 3, 4, 5, 7]; // Include 7th for more complex timbre
+                const harmonicAmps = [1.0, 0.6, 0.4, 0.25, 0.15, 0.1]; // More gradual falloff
 
                 for (let i = 0; i < output.length; i++) {
                     const t = i / sampleRate;
@@ -310,9 +319,12 @@
                         sample += Math.sin(2 * Math.PI * freq * t) * amp;
                     }
 
-                    // Apply envelope (attack and decay)
-                    const envelope = Math.exp(-t * 30) * Math.min(1, t * 100);
-                    output[i] = sample * envelope * 0.3;
+                    // More natural envelope - sharper attack, longer decay
+                    const attack = Math.min(1, t * 200); // Faster attack
+                    const decay = Math.exp(-t * 8); // Slower decay for more resonance
+                    const envelope = attack * decay;
+                    
+                    output[i] = sample * envelope * 0.2; // Reduced overall volume
                 }
 
                 // Play the tick
@@ -474,6 +486,11 @@
                 if (this.metronomeGainNode) {
                     this.metronomeGainNode.gain.value = this.metronomeVolume;
                 }
+            }
+
+            adjustMetronomeFrequency(delta) {
+                this.metronomeFrequency = Math.max(200, Math.min(2000, this.metronomeFrequency + delta));
+                this.freqDisplay.textContent = this.metronomeFrequency + 'Hz';
             }
         }
         
