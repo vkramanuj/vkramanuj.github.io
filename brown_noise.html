@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brown Noise Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #2c1810;
+            color: #d4a574;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        .beta-display {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #f4c2a1;
+        }
+        
+        .arrow-btn {
+            background: #8b4513;
+            border: none;
+            color: white;
+            font-size: 4em;
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            margin: 10px;
+            cursor: pointer;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        .arrow-btn:hover {
+            background: #a0522d;
+        }
+        
+        .arrow-btn:active {
+            background: #654321;
+            transform: scale(0.95);
+        }
+        
+        .play-btn {
+            background: #228b22;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            padding: 20px 40px;
+            border-radius: 10px;
+            margin: 20px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        
+        .play-btn:hover {
+            background: #32cd32;
+        }
+        
+        .play-btn.playing {
+            background: #dc143c;
+        }
+        
+        .beta-info {
+            font-size: 0.9em;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Brown Noise Generator</h1>
+        
+        <button class="play-btn" id="playBtn">Start Noise</button>
+        
+        <div class="controls">
+            <button class="arrow-btn" id="upBtn">▲</button>
+            <div class="beta-display" id="betaDisplay">2.0</div>
+            <button class="arrow-btn" id="downBtn">▼</button>
+        </div>
+        
+        <div class="beta-info">
+            Higher β = Deeper brown noise<br>
+            Range: 0.5 - 4.0
+        </div>
+    </div>
+
+    <script>
+        class BrownNoiseGenerator {
+            constructor() {
+                this.audioContext = null;
+                this.noiseNode = null;
+                this.filterNode = null;
+                this.gainNode = null;
+                this.isPlaying = false;
+                this.beta = 2.0;
+                
+                this.initializeElements();
+                this.setupEventListeners();
+            }
+            
+            initializeElements() {
+                this.playBtn = document.getElementById('playBtn');
+                this.upBtn = document.getElementById('upBtn');
+                this.downBtn = document.getElementById('downBtn');
+                this.betaDisplay = document.getElementById('betaDisplay');
+            }
+            
+            setupEventListeners() {
+                this.playBtn.addEventListener('click', () => this.toggleNoise());
+                this.upBtn.addEventListener('click', () => this.adjustBeta(0.1));
+                this.downBtn.addEventListener('click', () => this.adjustBeta(-0.1));
+            }
+            
+            async initAudio() {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Create noise buffer
+                    const bufferSize = this.audioContext.sampleRate * 2;
+                    const noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                    const output = noiseBuffer.getChannelData(0);
+                    
+                    // Generate white noise
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    
+                    // Create nodes
+                    this.noiseNode = this.audioContext.createBufferSource();
+                    this.noiseNode.buffer = noiseBuffer;
+                    this.noiseNode.loop = true;
+                    
+                    this.filterNode = this.audioContext.createBiquadFilter();
+                    this.gainNode = this.audioContext.createGain();
+                    this.gainNode.gain.value = 0.3;
+                    
+                    // Connect nodes
+                    this.noiseNode.connect(this.filterNode);
+                    this.filterNode.connect(this.gainNode);
+                    this.gainNode.connect(this.audioContext.destination);
+                    
+                    this.updateFilter();
+                }
+            }
+            
+            updateFilter() {
+                if (this.filterNode) {
+                    // Brown noise is created by low-pass filtering with frequency roll-off
+                    // Higher beta = lower cutoff frequency = deeper brown noise
+                    const cutoffFreq = Math.max(50, 2000 / Math.pow(this.beta, 2));
+                    this.filterNode.type = 'lowpass';
+                    this.filterNode.frequency.value = cutoffFreq;
+                    this.filterNode.Q.value = this.beta * 0.5;
+                }
+            }
+            
+            async toggleNoise() {
+                if (!this.isPlaying) {
+                    await this.initAudio();
+                    if (this.audioContext.state === 'suspended') {
+                        await this.audioContext.resume();
+                    }
+                    this.noiseNode.start();
+                    this.isPlaying = true;
+                    this.playBtn.textContent = 'Stop Noise';
+                    this.playBtn.classList.add('playing');
+                } else {
+                    this.noiseNode.stop();
+                    this.noiseNode = null;
+                    this.audioContext = null;
+                    this.isPlaying = false;
+                    this.playBtn.textContent = 'Start Noise';
+                    this.playBtn.classList.remove('playing');
+                }
+            }
+            
+            adjustBeta(delta) {
+                this.beta = Math.max(0.5, Math.min(4.0, this.beta + delta));
+                this.betaDisplay.textContent = this.beta.toFixed(1);
+                this.updateFilter();
+            }
+        }
+        
+        // Initialize the generator when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new BrownNoiseGenerator();
+        });
+    </script>
+</body>
+</html>
+
