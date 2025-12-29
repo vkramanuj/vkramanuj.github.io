@@ -6,57 +6,254 @@
     <title>Vivek Ramanujan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Space+Grotesk:wght@300..700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
+      :root {
+        --bg: #0a0a0a;
+        --fg: #e8e8e8;
+        --accent: #fff;
+        --muted: #666;
+        --border: #333;
+        --highlight: #ff3e00;
+      }
+
+      [data-theme="light"] {
+        --bg: #fafafa;
+        --fg: #1a1a1a;
+        --accent: #000;
+        --muted: #888;
+        --border: #ddd;
+        --highlight: #ff3e00;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+      }
+
       body {
-        max-width: 1000px;
+        font-family: 'JetBrains Mono', monospace;
+        background: var(--bg);
+        color: var(--fg);
+        line-height: 1.7;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+      }
+
+      .container {
+        max-width: 900px;
         margin: 0 auto;
-        padding: 2rem;
-        background: #1a1a1a;
-        color: #f5f5f5;
-        /* font-family: */
-        /*   "space grotesk", */
-        /*   system-ui, */
-        /*   -apple-system, */
-        /*   sans-serif; */
-        font-family:
-          "Alte Haas",
-          system-ui,
-          -apple-system,
-          sans-serif;
-        line-height: 1.6;
-      }
-      /**/
-      /* .header { */
-      /*   display: flex; */
-      /*   gap: 2rem; */
-      /*   margin-bottom: 3rem; */
-      /* } */
-
-      @font-face {
-        font-family: "Alte Haas";
-        src: url("./fonts/alte_haas.ttf") format("truetype");
-        /* src: url("./fonts/ibm_plex_mono.ttf") format("truetype"); */
-        font-weight: normal;
-        font-style: normal;
+        padding: 4rem 2rem;
       }
 
-      h1,
-      h2 {
-        font-family:
-          "Alte Haas",
-          system-ui,
-          -apple-system,
-          sans-serif;
+      @media (max-width: 600px) {
+        .container {
+          padding: 2rem 1.5rem;
+        }
       }
 
+      /* Theme Toggle */
+      .theme-toggle {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: var(--border);
+        border: none;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: var(--highlight);
+        color: #fff;
+      }
+
+      /* Header */
       .header {
-        position: relative;
-        margin-bottom: 3rem;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 2rem;
+        align-items: start;
+        margin-bottom: 4rem;
+        padding-bottom: 2rem;
+        border-bottom: 4px solid var(--fg);
       }
+
+      @media (max-width: 600px) {
+        .header {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+      }
+
+      .profile-image {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        filter: grayscale(100%);
+        transition: filter 0.3s;
+      }
+
+      .profile-image:hover {
+        filter: grayscale(0%);
+      }
+
+      @media (max-width: 600px) {
+        .profile-image {
+          width: 100px;
+          height: 100px;
+          order: -1;
+        }
+      }
+
+      h1 {
+        font-size: clamp(2rem, 8vw, 4rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+      }
+
+      .bio {
+        font-size: 0.95rem;
+        color: var(--fg);
+        max-width: 600px;
+      }
+
+      .bio a {
+        color: var(--highlight);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+      }
+
+      .bio a:hover {
+        border-bottom-color: var(--highlight);
+      }
+
+      /* Links Bar */
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 2rem;
+      }
+
+      .links a {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: var(--fg);
+        color: var(--bg);
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: background 0.2s, transform 0.2s;
+      }
+
+      .links a:hover {
+        background: var(--highlight);
+        color: #fff;
+        transform: translateY(-2px);
+      }
+
+      /* Sections */
+      .section {
+        margin-bottom: 4rem;
+      }
+
+      h2 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+        margin-bottom: 2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      /* Papers */
+      .paper {
+        margin-bottom: 3rem;
+        padding-left: 1rem;
+        border-left: 2px solid var(--border);
+        transition: border-color 0.2s;
+      }
+
+      .paper:hover {
+        border-left-color: var(--highlight);
+      }
+
+      .paper-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--fg);
+        margin-bottom: 0.5rem;
+        text-decoration: none;
+        display: block;
+      }
+
+      .paper-title:hover {
+        color: var(--highlight);
+      }
+
+      .paper-authors {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+      }
+
+      .paper-authors .me {
+        color: var(--fg);
+        font-weight: 500;
+      }
+
+      .paper-venue {
+        font-size: 0.8rem;
+        color: var(--highlight);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+      }
+
+      .paper-description {
+        font-size: 0.9rem;
+        color: var(--fg);
+        opacity: 0.8;
+        margin-bottom: 1rem;
+      }
+
+      .paper-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .paper-links a {
+        font-size: 0.75rem;
+        color: var(--muted);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .paper-links a:hover {
+        color: var(--highlight);
+      }
+
+      /* Service Grid */
       .service-grid {
         display: grid;
         gap: 0.5rem;
@@ -64,654 +261,244 @@
 
       .service-item {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 140px 1fr;
         gap: 1rem;
-      }
-
-      .service-item .role {
-        text-align: right;
-        color: #888;
-      }
-
-      .service-item .event {
-        text-align: left;
-        color: #e0e0e0;
-      }
-
-      .profile-image {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        float: right;
-        margin-left: 1.5rem;
-        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border);
       }
 
       @media (max-width: 600px) {
-        .profile-image {
-          width: 80px;
-          height: 80px;
-          margin-left: 1rem;
-          margin-bottom: 0.5rem;
+        .service-item {
+          grid-template-columns: 1fr;
+          gap: 0.25rem;
         }
       }
 
-      .bio {
-        width: 100%;
+      .service-item .role {
+        color: var(--muted);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
       }
 
-      nav {
-        margin: 2rem 0;
-        border-bottom: 1px solid #333;
-        padding-bottom: 1rem;
+      .service-item .event {
+        color: var(--fg);
       }
 
-      nav a {
-        color: #b8daff;
-        text-decoration: none;
-        margin-right: 2rem;
-      }
-
-      nav a:hover {
-        text-decoration: underline;
-      }
-
-      h1 {
-        font-size: 2.5rem;
-        margin: 0 0 1rem 0;
-        font-weight: 700;
-      }
-
-      h2 {
-        font-size: 1.8rem;
-        margin: 2rem 0 1rem 0;
-        color: #f5f5f5;
-      }
-
-      a {
-        color: #b8daff;
+      .service-item a {
+        color: var(--highlight);
         text-decoration: none;
       }
 
-      a:hover {
-        text-decoration: underline;
-      }
-
-      .links {
-        margin: 1rem 0;
-        color: #888;
-        text-align: center;
-      }
-
-      .links a {
-        color: #b8daff;
-        margin-right: 0.5rem;
-        margin-left: 0.5rem;
-      }
-
-      .section {
-        margin: 2rem 0;
-      }
-
-      .paper {
-        margin-bottom: 3rem;
-        display: flex;
-        gap: 2rem;
-      }
-
-      .paper-content {
-        flex: 1;
-      }
-
-      .paper-title {
-        font-size: 1.1rem;
-        color: #99c9ff;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-      }
-
-      .paper-authors {
-        margin-bottom: 0.5rem;
-        color: #e0e0e0;
-      }
-
-      .paper-venue {
-        font-style: italic;
-        margin-bottom: 1rem;
-        color: #888;
-      }
-
-      .paper-description {
-        margin-bottom: 1rem;
-        color: #e0e0e0;
-      }
-
-      .paper-links {
-        font-size: 0.9rem;
-      }
-
-      .paper-links a {
-        margin-right: 1rem;
-        color: #b8daff;
-      }
-
+      /* Footer */
       .footer {
         margin-top: 4rem;
-        text-align: right;
-        font-size: 0.8rem;
-        color: #888;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.75rem;
+        color: var(--muted);
       }
 
-      .strong {
-        font-weight: bold;
+      .note {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-bottom: 2rem;
       }
     </style>
   </head>
   <body>
-    <div class="header">
-      <img
-        src="./images/vivekr.png"
-        alt="Vivek Ramanujan"
-        class="profile-image"
-      />
-      <div class="bio">
-        <h1>Vivek Ramanujan</h1>
-        <p>
-          I am currently a PhD student at the
-          <a href="https://cs.washington.edu">University of Washington</a>
-          working with
-          <a href="https://homes.cs.washington.edu/~ali/">Ali Farhadi</a> and
-          <a href="https://people.csail.mit.edu/ludwigs/">Ludwig Schmidt</a> on
-          problems related to robust machine learning. Previously, I was a
-          predoctoral researcher on the PRIOR (vision) group at the
-          <a href="https://prior.allenai.org"
-            >Allen Institute for Artificial Intelligence</a
-          >
-          (AI2), where I was advised by Mohammad Rastegari and Aniruddha
-          Kembhavi.
-        </p>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <span id="theme-icon">◐</span>
+    </button>
 
-        <div class="links">
-          <a href="mailto:ramanv@cs.washington.edu">Email</a> /
-          <a href="cv.pdf">CV</a> /
-          <a href="https://www.github.com/vkramanuj">Github</a> /
-          <a href="https://scholar.google.com/citations?user=yXFPyNMAAAAJ&hl=en"
-            >Google Scholar</a
-          >
+    <div class="container">
+      <header class="header">
+        <div class="bio-section">
+          <h1>Vivek<br>Ramanujan</h1>
+          <p class="bio">
+            PhD student at the <a href="https://cs.washington.edu">University of Washington</a>,
+            working with <a href="https://homes.cs.washington.edu/~ali/">Ali Farhadi</a> and
+            <a href="https://people.csail.mit.edu/ludwigs/">Ludwig Schmidt</a> on robust machine learning.
+            Previously predoctoral researcher at <a href="https://prior.allenai.org">AI2</a>.
+          </p>
+          <div class="links">
+            <a href="mailto:ramanv@cs.washington.edu">Email</a>
+            <a href="cv.pdf">CV</a>
+            <a href="https://www.github.com/vkramanuj">Github</a>
+            <a href="https://scholar.google.com/citations?user=yXFPyNMAAAAJ&hl=en">Scholar</a>
+          </div>
         </div>
-      </div>
-    </div>
+        <img src="./images/vivekr.png" alt="Vivek Ramanujan" class="profile-image" />
+      </header>
 
-    <div class="section">
-      <h2>Research</h2>
-      <p>
-        I'm broadly interested in computer vision, machine learning, and
-        optimization. See my Google Scholar for a consistently up-to-date
-        publication list.
-      </p>
-    </div>
+      <section class="section">
+        <h2>Research</h2>
+        <p class="note">* denotes equal contribution</p>
 
-    <div class="section">
-      * denotes equal contribution
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2412.16326">
-            <div class="paper-title">
-              When Worse is Better: Navigating the Compression-Generation
-              Tradeoff in Visual Tokenization
-            </div>
+        <article class="paper">
+          <a href="https://arxiv.org/abs/2412.16326" class="paper-title">
+            When Worse is Better: Navigating the Compression-Generation Tradeoff in Visual Tokenization
           </a>
           <div class="paper-authors">
-            <span class="strong">Vivek Ramanujan</span>, Kushal Tirumala, Armen
-            Aghajanyan, Luke Zettlemoyer, Ali Farhadi
+            <span class="me">Vivek Ramanujan</span>, Kushal Tirumala, Armen Aghajanyan, Luke Zettlemoyer, Ali Farhadi
           </div>
-          <div class="paper-venue">arXiv, 2024</div>
+          <div class="paper-venue">arXiv 2024</div>
           <div class="paper-description">
-            We challenge the assumption that better image reconstruction leads
-            to better generation in two-stage image generation models. We
-            introduce Causally Regularized Tokenization (CRT), which optimizes
-            the compression-generation trade-off by incorporating stage 2
-            generation knowledge into stage 1 training. Despite worse
-            reconstruction, CRT achieves state-of-the-art ImageNet generation
-            (2.18 FID) with 2-3× improved compute efficiency, using fewer tokens
-            and parameters than previous methods.
+            Challenging the assumption that better image reconstruction leads to better generation. CRT achieves state-of-the-art ImageNet generation (2.18 FID) with 2-3x improved compute efficiency.
           </div>
-        </div>
-      </div>
+        </article>
 
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2412.07770">
-            <div class="paper-title">
-              From an Image to a Scene: Learning to Imagine the World from a
-              Million 360 Videos
-            </div>
+        <article class="paper">
+          <a href="https://arxiv.org/abs/2412.07770" class="paper-title">
+            From an Image to a Scene: Learning to Imagine the World from a Million 360 Videos
           </a>
           <div class="paper-authors">
-            Matthew Wallingford, Anand Bhattad, Aditya Kusupati,
-            <span class="strong">Vivek Ramanujan</span>, Matt Deitke, Sham
-            Kakade, Aniruddha Kembhavi, Roozbeh Mottaghi, Wei-Chiu Ma, Ali
-            Farhadi
+            Matthew Wallingford, Anand Bhattad, Aditya Kusupati, <span class="me">Vivek Ramanujan</span>, Matt Deitke, et al.
           </div>
-          <div class="paper-venue">In Proceedings at NeurIPS, 2024</div>
+          <div class="paper-venue">NeurIPS 2024</div>
           <div class="paper-description">
-            We introduce 360-1M, a large-scale 360-degree video dataset, and
-            Odin, a diffusion-based model for novel view synthesis. By
-            leveraging the largest real-world, multi-view dataset to date, Odin
-            can generate novel views of real-world scenes and infer scene
-            geometry and layout, showing improved performance on standard view
-            synthesis and 3D reconstruction benchmarks.
+            360-1M dataset and Odin model for novel view synthesis from the largest real-world multi-view dataset to date.
           </div>
-        </div>
-      </div>
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2406.05184">
-            <div class="paper-title">
-              The Unmet Promise of Synthetic Training Images: Using Retrieved
-              Real Images Performs Better
-            </div>
-          </a>
-          <div class="paper-authors">
-            Scott Geng, Cheng-Yu Hsieh,
-            <span class="strong">Vivek Ramanujan</span>, Matthew Wallingford,
-            Chun-Liang Li, Pang Wei Koh, Ranjay Krishna
-          </div>
-          <div class="paper-venue">In Proceedings at NeurIPS, 2024</div>
-          <div class="paper-description">
-            We investigate the effectiveness of synthetic images for training
-            vision models by comparing them against retrieved real images from
-            the generator's training data (LAION-2B). Our findings show that
-            while synthetic data can be beneficial, it is consistently matched
-            or outperformed by real images from a simple retrieval baseline,
-            partly due to generator artifacts and inaccurate visual details in
-            synthetic images.
-          </div>
-          <div class="paper-links">
-            <a href="https://github.com/scottgeng00/unmet-promise">Code</a>
-          </div>
-        </div>
-      </div>
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2307.12532">
-            <div class="paper-title">
-              On the Connection between Pre-training Data Diversity and
-              Fine-tuning Robustness
-            </div>
-          </a>
-          <div class="paper-authors">
-            <span class="strong">Vivek Ramanujan*</span>, Thao Nguyen*, Sewoong
-            Oh, Ludwig Schmidt, Ali Farhadi
-          </div>
-          <div class="paper-venue">
-            (Spotlight) In Proceedings at NeurIPS, 2023
-          </div>
-          <div class="paper-description">
-            We investigate how pre-training data properties affect the
-            robustness of fine-tuned models. Through extensive experiments
-            across natural and synthetic datasets, we find that data quantity is
-            the primary factor influencing downstream robustness, while other
-            factors like label space, semantics, and image diversity have
-            limited impact. We demonstrate this using the iWildCam-WILDS
-            distribution shift benchmark, showing that even significant changes
-            to pre-training class distribution don't affect robustness when
-            total data quantity is preserved.
-          </div>
-        </div>
-      </div>
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2304.14108">
-            <div class="paper-title">
-              DataComp: In Search of the Next Generation of Multimodal Datasets
-            </div>
-          </a>
-          <div class="paper-authors">
-            Samir Yitzhak Gadre*, Gabriel Ilharco*, Alex Fang*, (many more
-            important authors) <span class="strong">Vivek Ramanujan</span>,
-            (many more important authors), Vaishaal Shankar, Ludwig Schmidt
-          </div>
-          <div class="paper-venue">
-            In Proceedings at NeurIPS (Datasets and Benchmarks Track), 2023
-          </div>
-          <div class="paper-description">
-            We introduce DataComp, a benchmark for multimodal dataset creation
-            with a candidate pool of 12.8B image-text pairs. Our testbed enables
-            systematic evaluation of dataset design choices through standardized
-            CLIP training and evaluation on 38 downstream tasks. Our best
-            baseline, DataComp-1B, achieves 79.2% zero-shot ImageNet accuracy
-            with CLIP ViT-L/14, surpassing OpenAI's CLIP by 3.7%.
-          </div>
-          <div class="paper-links">
-            <a href="https://github.com/mlfoundations/datacomp">Code</a>
-          </div>
-        </div>
-      </div>
+        </article>
 
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2306.10191">
-            <div class="paper-title">
-              Neural Priming for Sample-Efficient Adaptation
-            </div>
+        <article class="paper">
+          <a href="https://arxiv.org/abs/2307.12532" class="paper-title">
+            On the Connection between Pre-training Data Diversity and Fine-tuning Robustness
           </a>
           <div class="paper-authors">
-            Matthew Wallingford*, <span class="strong">Vivek Ramanujan*</span>,
-            Alex Fang, Aditya Kusupati, Roozbeh Mottaghi, Aniruddha Kembhavi,
-            Ludwig Schmidt, Ali Farhadi
+            <span class="me">Vivek Ramanujan*</span>, Thao Nguyen*, Sewoong Oh, Ludwig Schmidt, Ali Farhadi
           </div>
-          <div class="paper-venue">In Proceedings at NeurIPS, 2023</div>
+          <div class="paper-venue">NeurIPS 2023 — Spotlight</div>
           <div class="paper-description">
-            We introduce Neural Priming, a technique that enables large
-            pretrained models to adapt to distribution shifts and downstream
-            tasks with minimal labeled data. By recalling and conditioning on
-            relevant pretraining data when presented with class names or
-            unlabeled samples, Neural Priming achieves significant improvements
-            across various benchmarks: 2.45% on ImageNet zero-shot, 3.81% on
-            transfer learning tasks, and 1.41% on ImageNetV2 using test-time
-            adaptation.
+            Data quantity is the primary factor influencing downstream robustness, while other factors have limited impact.
+          </div>
+        </article>
+
+        <article class="paper">
+          <a href="https://arxiv.org/abs/2306.10191" class="paper-title">
+            Neural Priming for Sample-Efficient Adaptation
+          </a>
+          <div class="paper-authors">
+            Matthew Wallingford*, <span class="me">Vivek Ramanujan*</span>, Alex Fang, et al.
+          </div>
+          <div class="paper-venue">NeurIPS 2023</div>
+          <div class="paper-description">
+            Enabling large pretrained models to adapt to distribution shifts with minimal labeled data.
           </div>
           <div class="paper-links">
             <a href="https://github.com/RAIVNLab/neural-priming">Code</a>
           </div>
-        </div>
-      </div>
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2301.04101">
-            <div class="paper-title">Neural Radiance Field Codebooks</div>
+        </article>
+
+        <article class="paper">
+          <a href="https://arxiv.org/abs/2205.13147" class="paper-title">
+            Matryoshka Representations for Adaptive Deployment
           </a>
           <div class="paper-authors">
-            Matthew Wallingford, Aditya Kusupati, Alex Fang,
-            <span class="strong">Vivek Ramanujan</span>, Aniruddha Kembhavi,
-            Roozbeh Mottaghi, Ali Farhadi
+            Aditya Kusupati, Gantavya Bhatt, Aniket Rege, Matthew Wallingford, Aditya Sinha, <span class="me">Vivek Ramanujan</span>, et al.
           </div>
-          <div class="paper-venue">
-            International Conference on Representation Learning 2023
-          </div>
+          <div class="paper-venue">NeurIPS 2022</div>
           <div class="paper-description">
-            We introduce Neural Radiance Field Codebooks (NRC), a method for
-            learning object-centric representations through novel view
-            reconstruction. NRC learns to reconstruct scenes using a dictionary
-            of object codes decoded through a volumetric renderer, enabling
-            discovery of reoccurring visual and geometric patterns. We
-            demonstrate superior performance in object navigation, unsupervised
-            segmentation, and depth ordering tasks across both synthetic and
-            real scenes.
-          </div>
-        </div>
-      </div>
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2205.13147">
-            <div class="paper-title">
-              Matryoshka Representations for Adaptive Deployment
-            </div>
-          </a>
-          <div class="paper-authors">
-            Aditya Kusupati, Gantavya Bhatt, Aniket Rege, Matthew Wallingford,
-            Aditya Sinha, <span class="strong">Vivek Ramanujan</span>, William
-            Howard-Snyder, Kaifeng Chen, Sham Kakade, Prateek Jain, Ali Farhadi
-          </div>
-          <div class="paper-venue">In Proceedings at NeurIPS, 2022</div>
-          <div class="paper-description">
-            We introduce Matryoshka Representation Learning (MRL), a method for
-            learning flexible representations that can adapt to multiple
-            downstream tasks with varying computational resources. MRL encodes
-            information at different granularities, allowing a single embedding
-            to adapt to computational constraints without additional inference
-            cost. We demonstrate significant improvements in efficiency and
-            accuracy across various tasks and modalities, including up to 14×
-            smaller embedding sizes for ImageNet classification and retrieval.
+            Flexible representations that adapt to multiple downstream tasks with varying computational resources.
           </div>
           <div class="paper-links">
             <a href="https://github.com/RAIVNLab/MRL">Code</a>
           </div>
-        </div>
-      </div>
-      <div class="paper">
-        <div class="paper-content">
-          <a
-            href="https://proceedings.neurips.cc/paper_files/paper/2021/file/c88d8d0a6097754525e02c2246d8d27f-Paper.pdf"
-          >
-            <div class="paper-title">
-              LLC: Accurate, Multi-Purpose Learnt Low-Dimensional Binary Codes
-            </div>
-          </a>
-          <div class="paper-authors">
-            Aditya Kusupati, Matthew Wallingford,
-            <span class="strong">Vivek Ramanujan</span>, Raghav Somani, Jae Sung
-            Park, Krishna Pillutla, Prateek Jain, Sham Kakade, Ali Farhadi
-          </div>
-          <div class="paper-venue">
-            Advances in Neural Information Processing Systems (NeurIPS), 2021
-          </div>
-          <div class="paper-description">
-            We propose a novel method for learning low-dimensional binary codes
-            for instances and classes without requiring side-information. Our
-            method learns extremely low-dimensional binary codes (~20 bits for
-            ImageNet-1K) while maintaining near-optimal classification accuracy.
-            The codes capture intrinsic data features, enabling efficient image
-            retrieval and out-of-distribution detection tasks.
-          </div>
-          <div class="paper-links">
-            <a href="https://github.com/RAIVNLab/LLC">Code</a>
-          </div>
-        </div>
-      </div>
+        </article>
 
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2112.02805">
-            <div class="paper-title">
-              Forward Compatible Training for Representation Learning
-            </div>
+        <article class="paper">
+          <a href="https://arxiv.org/abs/2112.02805" class="paper-title">
+            Forward Compatible Training for Representation Learning
           </a>
           <div class="paper-authors">
-            <span class="strong">Vivek Ramanujan</span>, Pavan Kumar Anasosalu
-            Vasu, Ali Farhadi, Oncel Tuzel, Hadi Pouransari
+            <span class="me">Vivek Ramanujan</span>, Pavan Kumar Anasosalu Vasu, Ali Farhadi, Oncel Tuzel, Hadi Pouransari
           </div>
-          <div class="paper-venue">In Proceedings at CVPR, 2022</div>
+          <div class="paper-venue">CVPR 2022</div>
           <div class="paper-description">
-            In real world visual retrieval systems, the embedding model is
-            consistently updated. This requires embeddings for all images in the
-            gallery to be recomputed for every new model, an expensive process
-            known as backfilling. We present a method for forward compatible
-            training (FCT) in which we prepare for the future version of a model
-            by saving cheap auxiliary information about the present training
-            task. We show empirically that this improves performance on model
-            compatibility on common largescale datasets (ImageNet, Places-365,
-            VGGFace2).
+            Preparing for future model versions by saving cheap auxiliary information about present training.
           </div>
           <div class="paper-links">
             <a href="https://github.com/apple/ml-fct">Code</a>
           </div>
-        </div>
-      </div>
+        </article>
 
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2010.09697">
-            <div class="paper-title">
-              Effects of Parameter Norm Growth During Transformer Training:
-              Inductive Bias from Gradient Descent
-            </div>
+        <article class="paper">
+          <a href="https://arxiv.org/abs/2006.14769" class="paper-title">
+            Supermasks in Superposition
           </a>
           <div class="paper-authors">
-            Will Merrill, <span class="strong">Vivek Ramanujan</span>, Yoav
-            Goldberg, Roy Schwartz, Noah Smith
+            Mitchell Wortsman*, <span class="me">Vivek Ramanujan*</span>, Rosanne Liu, et al.
           </div>
-          <div class="paper-venue">In Proceedings at EMNLP, (Oral) 2022</div>
+          <div class="paper-venue">NeurIPS 2020</div>
           <div class="paper-description">
-            The capacity of neural networks like the widely adopted transformer
-            is known to be very high. Evidence is emerging that they learn
-            successfully due to inductive bias in the training routine,
-            typically a variant of gradient descent (GD). As the parameters grow
-            in magnitude, we prove that the network approximates a discretized
-            network with saturated activation functions. Such "saturated"
-            networks are known to have a reduced capacity compared to the full
-            network family that can be described in terms of formal languages
-            and automata. Our results suggest saturation is a new
-            characterization of an inductive bias implicit in GD of particular
-            interest for NLP. We leverage the emergent discrete structure in a
-            saturated transformer to analyze the role of different attention
-            heads, finding that some focus locally on a small number of
-            positions, while other heads compute global averages, allowing
-            counting.
-          </div>
-        </div>
-      </div>
-
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2006.14769">
-            <div class="paper-title">Supermasks in Superposition</div>
-          </a>
-          <div class="paper-authors">
-            Mitchell Wortsman*, <span class="strong">Vivek Ramanujan*</span>,
-            Rosanne Liu, Aniruddha Kembhavi, Mohammad Rastegari, Jason Yosinski,
-            Ali Farhadi
-          </div>
-          <div class="paper-venue">In Proceedings at NeurIPS, 2020</div>
-          <div class="paper-description">
-            We present an application of hidden networks for continual learning,
-            capable of learning thousands of tasks without catastrophic
-            forgetting. We solve tasks individually, each solution corresponding
-            to a subnetwork of a randomly initialized neural network. Using a
-            superposition of these subnetworks, we demonstrate that the
-            viability of this model for task inference. Finally, we introduce a
-            coherent hierarchy for continual learning problems.
+            Hidden networks for continual learning—learning thousands of tasks without catastrophic forgetting.
           </div>
           <div class="paper-links">
-            <a href="https://github.com/RAIVNLab/supsup">Code</a> /
+            <a href="https://github.com/RAIVNLab/supsup">Code</a>
             <a href="https://mitchellnw.github.io/blog/2020/supsup">Blog</a>
           </div>
-        </div>
-      </div>
+        </article>
 
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/2002.03231">
-            <div class="paper-title">
-              Soft Threshold Weight Reparameterization for Learnable Sparsity
-            </div>
+        <article class="paper">
+          <a href="https://arxiv.org/abs/1911.13299" class="paper-title">
+            What's Hidden in a Randomly Weighted Neural Network?
           </a>
           <div class="paper-authors">
-            Aditya Kusupati, <span class="strong">Vivek Ramanujan</span>, Raghav
-            Somani, Mitchell Wortsman, Prateek Jain, Sham Kakade, Ali Farhadi
+            <span class="me">Vivek Ramanujan*</span>, Mitchell Wortsman*, Aniruddha Kembhavi, Ali Farhadi, Mohammad Rastegari
           </div>
-          <div class="paper-venue">
-            International Conference on Machine Learning, 2020
-          </div>
+          <div class="paper-venue">CVPR 2020</div>
           <div class="paper-description">
-            We introduce a new strategy for pruning neural networks based off of
-            the soft threshold reparametrization technique from signal
-            processing. The layerwise sparsity budgets allow for very sparse but
-            still highly performant trained models across a variety of
-            architectures and tasks.
-          </div>
-        </div>
-      </div>
-
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/1911.13299">
-            <div class="paper-title">
-              What's Hidden in a Randomly Weighted Neural Network?
-            </div>
-          </a>
-          <div class="paper-authors">
-            <span class="strong">Vivek Ramanujan*</span>, Mitchell Wortsman*,
-            Aniruddha Kembhavi, Ali Farhadi, Mohammad Rastegari
-          </div>
-          <div class="paper-venue">
-            Computer Vision and Pattern Recognition, 2020
-          </div>
-          <div class="paper-description">
-            We demonstrate that you can find untrained subnetworks of common
-            overparametrized convolutional neural networks
-            <em>at initialization</em> that achieve performance similar to their
-            densely trained counterparts.
+            Finding untrained subnetworks at initialization that match trained network performance.
           </div>
           <div class="paper-links">
-            <a href="https://www.github.com/allenai/hidden-networks"
-              >Code and Project Page</a
-            >
+            <a href="https://www.github.com/allenai/hidden-networks">Code</a>
           </div>
-        </div>
-      </div>
+        </article>
+      </section>
 
-      <div class="paper">
-        <div class="paper-content">
-          <a href="https://arxiv.org/abs/1808.04325">
-            <div class="paper-title">
-              Improving Shape Deformation in Unsupervised Image-to-Image
-              Translation
-            </div>
-          </a>
-          <div class="paper-authors">
-            Aaron Gokaslan, <span class="strong">Vivek Ramanujan</span>,
-            Kwang-In Kim, Daniel Ritchie, James Tompkin
+      <section class="section">
+        <h2>Service</h2>
+        <div class="service-grid">
+          <div class="service-item">
+            <span class="role">Reviewer</span>
+            <span class="event">CVPR 2025, ICLR 2024, NeurIPS 2024</span>
           </div>
-          <div class="paper-venue">
-            European Conference for Computer Vision, 2018
+          <div class="service-item">
+            <span class="role">Teaching</span>
+            <span class="event">CS146 Computer Vision, CS142 ML, CS141 Applied AI, CS2951K Deep Learning</span>
           </div>
-          <div class="paper-description">
-            We improve on CycleGAN by allowing for better shape deformation
-            between more disparate domains.
+          <div class="service-item">
+            <span class="role">Fun</span>
+            <span class="event"><a href="reaction_game.html">Reaction Game</a> · <a href="brown_noise.html">Brown Noise</a></span>
           </div>
         </div>
-      </div>
+      </section>
+
+      <footer class="footer">
+        Vivek Ramanujan · Seattle, WA
+      </footer>
     </div>
 
-    <div class="section">
-      <h2>Service</h2>
-      <div class="paper">
-        <div class="paper-content service-grid">
-          <div class="service-item">
-            <span class="role">Reviewer</span>
-            <span class="event">CVPR 2025</span>
-          </div>
-          <div class="service-item">
-            <span class="role">Reviewer</span>
-            <span class="event">ICLR 2024</span>
-          </div>
-          <div class="service-item">
-            <span class="role">Reviewer</span>
-            <span class="event">NeurIPS 2024</span>
-          </div>
-          <div class="service-item">
-            <span class="role">Teaching Assistant</span>
-            <span class="event">Computer Vision CS146 Spring 2018</span>
-          </div>
-          <div class="service-item">
-            <span class="role">Teaching Assistant</span>
-            <span class="event">Machine Learning CS142 Spring 2018</span>
-          </div>
-          <div class="service-item">
-            <span class="role">Teaching Assistant</span>
-            <span class="event"
-              >Applied Artificial Intelligence CS141 Spring 2017</span
-            >
-          </div>
-          <div class="service-item">
-            <span class="role">Teaching Assistant</span>
-            <span class="event">Deep Learning CS2951K, Fall 2016</span>
-          </div>
+    <script>
+      function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', next);
+        document.getElementById('theme-icon').textContent = next === 'light' ? '◑' : '◐';
+        localStorage.setItem('theme', next);
+      }
 
-          <div class="service-item">
-            <span class="role">Reaction Game</span>
-            <span class="event"><a href="reaction_game.html">Link</a></span>
-          </div>
-
-          <div class="service-item">
-            <span class="role">Brown Noise</span>
-            <span class="event"><a href="brown_noise.html">Link</a></span>
-          </div>
-        </div>
-      </div>
-    </div>
+      // Load saved theme
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+        document.getElementById('theme-icon').textContent = saved === 'light' ? '◑' : '◐';
+      } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.getElementById('theme-icon').textContent = '◑';
+      }
+    </script>
   </body>
 </html>
