@@ -221,6 +221,33 @@
         font-weight: 500;
       }
 
+      /* Collapsible author list */
+      .authors-collapsed .authors-hidden {
+        display: none;
+      }
+
+      .authors-collapsed .ellipsis {
+        display: inline;
+      }
+
+      .authors-expanded .authors-hidden {
+        display: inline;
+      }
+
+      .authors-expanded .ellipsis {
+        display: none;
+      }
+
+      .ellipsis {
+        cursor: pointer;
+        color: var(--highlight);
+        padding: 0 0.2rem;
+      }
+
+      .ellipsis:hover {
+        text-decoration: underline;
+      }
+
       .paper-venue {
         font-size: 0.8rem;
         color: var(--highlight);
@@ -411,8 +438,8 @@
           <a href="https://arxiv.org/abs/2304.14108" class="paper-title">
             DataComp: In Search of the Next Generation of Multimodal Datasets
           </a>
-          <div class="paper-authors">
-            Samir Yitzhak Gadre*, Gabriel Ilharco*, Alex Fang*, Jonathan Hayase, Georgios Smyrnis, Thao Nguyen, Ryan Marten, Mitchell Wortsman, Dhruba Ghosh, Jieyu Zhang, Eyal Orgad, Rahim Entezari, Giannis Daras, Sarah Pratt, <span class="me">Vivek Ramanujan</span>, Yonatan Bitton, Kalyani Marathe, Stephen Mussmann, Richard Vencu, Mehdi Cherti, Ranjay Krishna, Pang Wei Koh, Olga Saukh, Alexander Ratner, Shuran Song, Hannaneh Hajishirzi, Ali Farhadi, Romain Beaumont, Sewoong Oh, Alex Dimakis, Jenia Jitsev, Yair Carmon, Vaishaal Shankar, Ludwig Schmidt
+          <div class="paper-authors authors-collapsed" onclick="this.classList.toggle('authors-collapsed'); this.classList.toggle('authors-expanded');">
+            Samir Yitzhak Gadre*, Gabriel Ilharco*, Alex Fang*,<span class="ellipsis" title="Click to expand">...</span><span class="authors-hidden"> Jonathan Hayase, Georgios Smyrnis, Thao Nguyen, Ryan Marten, Mitchell Wortsman, Dhruba Ghosh, Jieyu Zhang, Eyal Orgad, Rahim Entezari, Giannis Daras, Sarah Pratt,</span> <span class="me">Vivek Ramanujan</span>,<span class="ellipsis" title="Click to expand">...</span><span class="authors-hidden"> Yonatan Bitton, Kalyani Marathe, Stephen Mussmann, Richard Vencu, Mehdi Cherti, Ranjay Krishna, Pang Wei Koh, Olga Saukh, Alexander Ratner, Shuran Song, Hannaneh Hajishirzi, Ali Farhadi, Romain Beaumont, Sewoong Oh, Alex Dimakis, Jenia Jitsev, Yair Carmon,</span> Vaishaal Shankar, Ludwig Schmidt
           </div>
           <div class="paper-venue">NeurIPS 2023 — Datasets Track</div>
           <div class="paper-description">
