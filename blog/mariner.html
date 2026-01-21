@@ -34,6 +34,7 @@
 
       html {
         font-size: 16px;
+        scroll-behavior: smooth;
       }
 
       body {
@@ -43,18 +44,6 @@
         line-height: 1.7;
         min-height: 100vh;
         transition: background 0.3s, color 0.3s;
-      }
-
-      .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 4rem 2rem;
-      }
-
-      @media (max-width: 600px) {
-        .container {
-          padding: 2rem 1.5rem;
-        }
       }
 
       /* Theme Toggle */
@@ -77,6 +66,85 @@
       .theme-toggle:hover {
         background: var(--highlight);
         color: #fff;
+      }
+
+      /* Layout */
+      .page-wrapper {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+        gap: 4rem;
+      }
+
+      @media (max-width: 900px) {
+        .page-wrapper {
+          grid-template-columns: 1fr;
+          padding: 2rem 1.5rem;
+        }
+      }
+
+      /* Table of Contents */
+      .toc {
+        position: sticky;
+        top: 4rem;
+        align-self: start;
+        max-height: calc(100vh - 8rem);
+        overflow-y: auto;
+      }
+
+      @media (max-width: 900px) {
+        .toc {
+          position: static;
+          border-bottom: 1px solid var(--border);
+          padding-bottom: 2rem;
+          margin-bottom: 2rem;
+        }
+      }
+
+      .toc-title {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-bottom: 1rem;
+      }
+
+      .toc-list {
+        list-style: none;
+      }
+
+      .toc-list li {
+        margin-bottom: 0.5rem;
+      }
+
+      .toc-list a {
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-decoration: none;
+        display: block;
+        padding: 0.25rem 0;
+        border-left: 2px solid transparent;
+        padding-left: 0.75rem;
+        transition: color 0.2s, border-color 0.2s;
+      }
+
+      .toc-list a:hover,
+      .toc-list a.active {
+        color: var(--fg);
+        border-left-color: var(--highlight);
+      }
+
+      .toc-list .toc-h3 {
+        padding-left: 1.5rem;
+        font-size: 0.75rem;
+      }
+
+      /* Main Content */
+      .main-content {
+        max-width: 700px;
       }
 
       /* Blog Header */
@@ -241,45 +309,56 @@
       <span id="theme-icon">◐</span>
     </button>
 
-    <div class="container">
-      <header class="blog-header">
-        <a href="../index.html" class="back-link">&larr; Back to Home</a>
-        <h1 class="blog-title">Mariner: Training Random-order Autoregressive Video World Models</h1>
-        <div class="blog-meta">
-          <span class="blog-date">January 2026</span>
-          <span class="blog-author">Vivek Ramanujan</span>
-        </div>
-      </header>
-
-      <article class="blog-content">
-        <p class="blog-intro">
-          We detail the efforts we undertook in building random-order video world models. Random-order pre-training allows for temporal in-painting (goal conditioned generation) and out-painting (extrapolating forward/backward in time) along with next-frame generation. This flexible framework unifies complicated pre-training procedures like image-to-video, text-to-video, and video in-painting into one run. We further find that mixing random-order training with standard auto-regressive training results in video diffusion models that have significantly improved auto-regressive generation. We explore this somewhat paradoxical result in more detail in this post.
-        </p>
-
-        <h2>Intro to Diffusion World Models</h2>
-        <p>
-          There are many ways one could model the physical world. With diffusion world models, we aim to do it directly from pixels, with no explicit underlying structure. The downside is likely that this is more data inefficient. The upside is that it's (hopefully) more general and can construct, since we do not have to hand model.
-        </p>
-
-        <h2>Evaluation</h2>
-        <p>
-          Every good research project starts with a robust evaluation setup. In general, evaluating video generation models has unique challenges. Since we're generating in a complex high-dimensional space, any automated metric needs to itself model some aspect of the real world and involves some degree of subjectivity (unlike text, where for some tasks you can use string matching with a ground truth response). We care about the following properties for our world model:
-        </p>
-        <ol>
-          <li><strong>Accuracy of pose-conditioned frame prediction.</strong> This is often referred to as novel-view synthesis. However, this setting is different in our case, since we also have a time varying component and potential dynamic objects.</li>
-          <li><strong>Fidelity of the generated video.</strong> This is an overall subjective judgment for how well our videos match the distribution of videos we're trying to generate.</li>
-          <li><strong>Amount of auto-regressive drift.</strong> Since we are generating framewise, a classic problem is "exposure bias".</li>
-        </ol>
-
-        <h3>Setup</h3>
-        <p>
-          Scaling laws are great and they can be applied to anything in the world. Due to this, we apply scaling laws here.
-        </p>
-      </article>
-
-      <nav class="blog-nav">
-        <a href="./" class="nav-link">&larr; All Posts</a>
+    <div class="page-wrapper">
+      <nav class="toc">
+        <div class="toc-title">Contents</div>
+        <ul class="toc-list">
+          <li><a href="#intro">Intro to Diffusion World Models</a></li>
+          <li><a href="#evaluation">Evaluation</a></li>
+          <li><a href="#setup" class="toc-h3">Setup</a></li>
+        </ul>
       </nav>
+
+      <main class="main-content">
+        <header class="blog-header">
+          <a href="../index.html" class="back-link">&larr; Back to Home</a>
+          <h1 class="blog-title">Mariner: Training Random-order Autoregressive Video World Models</h1>
+          <div class="blog-meta">
+            <span class="blog-date">January 2026</span>
+            <span class="blog-author">Vivek Ramanujan</span>
+          </div>
+        </header>
+
+        <article class="blog-content">
+          <p class="blog-intro">
+            We detail the efforts we undertook in building random-order video world models. Random-order pre-training allows for temporal in-painting (goal conditioned generation) and out-painting (extrapolating forward/backward in time) along with next-frame generation. This flexible framework unifies complicated pre-training procedures like image-to-video, text-to-video, and video in-painting into one run. We further find that mixing random-order training with standard auto-regressive training results in video diffusion models that have significantly improved auto-regressive generation. We explore this somewhat paradoxical result in more detail in this post.
+          </p>
+
+          <h2 id="intro">Intro to Diffusion World Models</h2>
+          <p>
+            There are many ways one could model the physical world. With diffusion world models, we aim to do it directly from pixels, with no explicit underlying structure. The downside is likely that this is more data inefficient. The upside is that it's (hopefully) more general and can construct, since we do not have to hand model.
+          </p>
+
+          <h2 id="evaluation">Evaluation</h2>
+          <p>
+            Every good research project starts with a robust evaluation setup. In general, evaluating video generation models has unique challenges. Since we're generating in a complex high-dimensional space, any automated metric needs to itself model some aspect of the real world and involves some degree of subjectivity (unlike text, where for some tasks you can use string matching with a ground truth response). We care about the following properties for our world model:
+          </p>
+          <ol>
+            <li><strong>Accuracy of pose-conditioned frame prediction.</strong> This is often referred to as novel-view synthesis. However, this setting is different in our case, since we also have a time varying component and potential dynamic objects.</li>
+            <li><strong>Fidelity of the generated video.</strong> This is an overall subjective judgment for how well our videos match the distribution of videos we're trying to generate.</li>
+            <li><strong>Amount of auto-regressive drift.</strong> Since we are generating framewise, a classic problem is "exposure bias".</li>
+          </ol>
+
+          <h3 id="setup">Setup</h3>
+          <p>
+            Scaling laws are great and they can be applied to anything in the world. Due to this, we apply scaling laws here.
+          </p>
+        </article>
+
+        <nav class="blog-nav">
+          <a href="./" class="nav-link">&larr; All Posts</a>
+        </nav>
+      </main>
     </div>
 
     <script>
@@ -297,6 +376,24 @@
       const theme = saved || 'light';
       document.documentElement.setAttribute('data-theme', theme);
       document.getElementById('theme-icon').textContent = theme === 'light' ? '◑' : '◐';
+
+      // Highlight active TOC item on scroll
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const id = entry.target.getAttribute('id');
+          const tocLink = document.querySelector(`.toc-list a[href="#${id}"]`);
+          if (tocLink) {
+            if (entry.isIntersecting) {
+              document.querySelectorAll('.toc-list a').forEach(a => a.classList.remove('active'));
+              tocLink.classList.add('active');
+            }
+          }
+        });
+      }, { rootMargin: '-20% 0px -80% 0px' });
+
+      document.querySelectorAll('.blog-content h2, .blog-content h3').forEach(heading => {
+        observer.observe(heading);
+      });
     </script>
   </body>
 </html>
