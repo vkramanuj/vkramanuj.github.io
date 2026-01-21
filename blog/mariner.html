@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mariner: Training Random-order Autoregressive Video World Models | Vivek Ramanujan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --fg: #e8e8e8;
+        --accent: #fff;
+        --muted: #666;
+        --border: #333;
+        --highlight: #ff3e00;
+      }
+
+      [data-theme="light"] {
+        --bg: #fafafa;
+        --fg: #1a1a1a;
+        --accent: #000;
+        --muted: #888;
+        --border: #ddd;
+        --highlight: #ff3e00;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+      }
+
+      body {
+        font-family: 'JetBrains Mono', monospace;
+        background: var(--bg);
+        color: var(--fg);
+        line-height: 1.7;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 2rem 1.5rem;
+        }
+      }
+
+      /* Theme Toggle */
+      .theme-toggle {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: var(--border);
+        border: none;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: var(--highlight);
+        color: #fff;
+      }
+
+      /* Blog Header */
+      .blog-header {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 4px solid var(--fg);
+      }
+
+      .back-link {
+        display: inline-block;
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 2rem;
+      }
+
+      .back-link:hover {
+        color: var(--highlight);
+      }
+
+      .blog-title {
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+      }
+
+      .blog-meta {
+        font-size: 0.85rem;
+        color: var(--muted);
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .blog-date {
+        color: var(--highlight);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* Blog Content */
+      .blog-content {
+        line-height: 1.8;
+      }
+
+      .blog-content h2 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--fg);
+        margin: 3rem 0 1.5rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .blog-content h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--fg);
+        margin: 2rem 0 1rem 0;
+      }
+
+      .blog-content p {
+        margin-bottom: 1.5rem;
+      }
+
+      .blog-intro {
+        font-size: 1.05rem;
+        color: var(--fg);
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        padding-left: 1rem;
+        border-left: 2px solid var(--highlight);
+      }
+
+      /* Code blocks */
+      .blog-content pre {
+        background: var(--border);
+        padding: 1.5rem;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        font-size: 0.85rem;
+      }
+
+      .blog-content code {
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      .blog-content p code {
+        background: var(--border);
+        padding: 0.2rem 0.4rem;
+        font-size: 0.9em;
+      }
+
+      /* Figures */
+      .blog-figure {
+        margin: 2rem 0;
+      }
+
+      .blog-figure img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .blog-figure figcaption {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 0.75rem;
+        font-style: italic;
+      }
+
+      /* Lists */
+      .blog-content ol,
+      .blog-content ul {
+        margin: 1.5rem 0;
+        padding-left: 1.5rem;
+      }
+
+      .blog-content li {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Links */
+      .blog-content a {
+        color: var(--highlight);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+      }
+
+      .blog-content a:hover {
+        border-bottom-color: var(--highlight);
+      }
+
+      /* Blog navigation */
+      .blog-nav {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .nav-link {
+        font-size: 0.85rem;
+        color: var(--muted);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .nav-link:hover {
+        color: var(--highlight);
+      }
+    </style>
+  </head>
+  <body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <span id="theme-icon">◐</span>
+    </button>
+
+    <div class="container">
+      <header class="blog-header">
+        <a href="../index.html" class="back-link">&larr; Back to Home</a>
+        <h1 class="blog-title">Mariner: Training Random-order Autoregressive Video World Models</h1>
+        <div class="blog-meta">
+          <span class="blog-date">January 2026</span>
+          <span class="blog-author">Vivek Ramanujan</span>
+        </div>
+      </header>
+
+      <article class="blog-content">
+        <p class="blog-intro">
+          We detail the efforts we undertook in building random-order video world models. Random-order pre-training allows for temporal in-painting (goal conditioned generation) and out-painting (extrapolating forward/backward in time) along with next-frame generation. This flexible framework unifies complicated pre-training procedures like image-to-video, text-to-video, and video in-painting into one run. We further find that mixing random-order training with standard auto-regressive training results in video diffusion models that have significantly improved auto-regressive generation. We explore this somewhat paradoxical result in more detail in this post.
+        </p>
+
+        <h2>Intro to Diffusion World Models</h2>
+        <p>
+          There are many ways one could model the physical world. With diffusion world models, we aim to do it directly from pixels, with no explicit underlying structure. The downside is likely that this is more data inefficient. The upside is that it's (hopefully) more general and can construct, since we do not have to hand model.
+        </p>
+
+        <h2>Evaluation</h2>
+        <p>
+          Every good research project starts with a robust evaluation setup. In general, evaluating video generation models has unique challenges. Since we're generating in a complex high-dimensional space, any automated metric needs to itself model some aspect of the real world and involves some degree of subjectivity (unlike text, where for some tasks you can use string matching with a ground truth response). We care about the following properties for our world model:
+        </p>
+        <ol>
+          <li><strong>Accuracy of pose-conditioned frame prediction.</strong> This is often referred to as novel-view synthesis. However, this setting is different in our case, since we also have a time varying component and potential dynamic objects.</li>
+          <li><strong>Fidelity of the generated video.</strong> This is an overall subjective judgment for how well our videos match the distribution of videos we're trying to generate.</li>
+          <li><strong>Amount of auto-regressive drift.</strong> Since we are generating framewise, a classic problem is "exposure bias".</li>
+        </ol>
+
+        <h3>Setup</h3>
+        <p>
+          Scaling laws are great and they can be applied to anything in the world. Due to this, we apply scaling laws here.
+        </p>
+      </article>
+
+      <nav class="blog-nav">
+        <a href="./" class="nav-link">&larr; All Posts</a>
+      </nav>
+    </div>
+
+    <script>
+      function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', next);
+        document.getElementById('theme-icon').textContent = next === 'light' ? '◑' : '◐';
+        localStorage.setItem('theme', next);
+      }
+
+      // Load saved theme or default to light
+      const saved = localStorage.getItem('theme');
+      const theme = saved || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('theme-icon').textContent = theme === 'light' ? '◑' : '◐';
+    </script>
+  </body>
+</html>

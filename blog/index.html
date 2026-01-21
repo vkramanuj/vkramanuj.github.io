@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blog | Vivek Ramanujan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --fg: #e8e8e8;
+        --accent: #fff;
+        --muted: #666;
+        --border: #333;
+        --highlight: #ff3e00;
+      }
+
+      [data-theme="light"] {
+        --bg: #fafafa;
+        --fg: #1a1a1a;
+        --accent: #000;
+        --muted: #888;
+        --border: #ddd;
+        --highlight: #ff3e00;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+      }
+
+      body {
+        font-family: 'JetBrains Mono', monospace;
+        background: var(--bg);
+        color: var(--fg);
+        line-height: 1.7;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 2rem 1.5rem;
+        }
+      }
+
+      /* Theme Toggle */
+      .theme-toggle {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: var(--border);
+        border: none;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: var(--highlight);
+        color: #fff;
+      }
+
+      /* Header */
+      .page-header {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 4px solid var(--fg);
+      }
+
+      .back-link {
+        display: inline-block;
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 2rem;
+      }
+
+      .back-link:hover {
+        color: var(--highlight);
+      }
+
+      h1 {
+        font-size: clamp(2rem, 8vw, 4rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        text-transform: uppercase;
+      }
+
+      /* Blog Posts */
+      .posts {
+        margin-top: 2rem;
+      }
+
+      .post {
+        margin-bottom: 3rem;
+        padding-left: 1rem;
+        border-left: 2px solid var(--border);
+        transition: border-color 0.2s;
+      }
+
+      .post:hover {
+        border-left-color: var(--highlight);
+      }
+
+      .post-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--fg);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .post-title:hover {
+        color: var(--highlight);
+      }
+
+      .post-date {
+        font-size: 0.8rem;
+        color: var(--highlight);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+      }
+
+      .post-excerpt {
+        font-size: 0.9rem;
+        color: var(--fg);
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <span id="theme-icon">◐</span>
+    </button>
+
+    <div class="container">
+      <header class="page-header">
+        <a href="../index.html" class="back-link">&larr; Back to Home</a>
+        <h1>Blog</h1>
+      </header>
+
+      <section class="posts">
+        <article class="post">
+          <a href="mariner.html" class="post-title">
+            Mariner: Training Random-order Autoregressive Video World Models
+          </a>
+          <div class="post-date">January 2026</div>
+          <div class="post-excerpt">
+            We detail the efforts we undertook in building random-order video world models. Random-order pre-training allows for temporal in-painting (goal conditioned generation) and out-painting (extrapolating forward/backward in time) along with next-frame generation.
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <script>
+      function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', next);
+        document.getElementById('theme-icon').textContent = next === 'light' ? '◑' : '◐';
+        localStorage.setItem('theme', next);
+      }
+
+      // Load saved theme or default to light
+      const saved = localStorage.getItem('theme');
+      const theme = saved || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('theme-icon').textContent = theme === 'light' ? '◑' : '◐';
+    </script>
+  </body>
+</html>
