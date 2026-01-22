@@ -262,6 +262,14 @@
         font-style: italic;
       }
 
+      /* Theme-aware images - invert for dark mode */
+      .theme-img {
+        display: block;
+      }
+      :root:not([data-theme="light"]) .theme-img {
+        filter: invert(1) hue-rotate(180deg);
+      }
+
       /* Lists */
       .blog-content ol,
       .blog-content ul {
@@ -405,6 +413,11 @@
           <p>
             There are many ways one could model the physical world. With diffusion world models, we aim to do it directly from pixels, with no explicit underlying structure. The downside is likely that this is more data inefficient. The upside is that it's (hopefully) more general and can construct, since we do not have to hand model.
           </p>
+
+          <figure class="blog-figure" style="width: 50%; margin: 2rem auto;">
+            <img src="../images/diffusion_forcing_light.png" alt="Diffusion Forcing" class="theme-img">
+            <figcaption>Figure 1: Caption placeholder</figcaption>
+          </figure>
 
           <h2 id="evaluation">Evaluation</h2>
           <p>
